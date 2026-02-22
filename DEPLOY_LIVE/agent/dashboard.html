@@ -1,0 +1,126 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Agent Dashboard</title>
+    <link rel="stylesheet" href="../css/style.css">
+</head>
+<body>
+    <div class="sidebar">
+        <div class="sidebar-header">
+            <h2>🏢 Estate Manager</h2>
+        </div>
+        <div class="sidebar-nav">
+            <a href="dashboard.html" class="nav-item active">
+                <span class="icon">📊</span> Dashboard
+            </a>
+            <a href="estates.html" class="nav-item">
+                <span class="icon">🏗️</span> Estates
+            </a>
+            <a href="courts.html" class="nav-item">
+                <span class="icon">🏘️</span> Courts
+            </a>
+            <a href="blocks.html" class="nav-item">
+                <span class="icon">🏢</span> Blocks
+            </a>
+            <a href="houses.html" class="nav-item">
+                <span class="icon">🏠</span> Houses
+            </a>
+            <a href="billing.html" class="nav-item">
+                <span class="icon">💰</span> Billing
+            </a>
+            <a href="employees.html" class="nav-item">
+                <span class="icon">👥</span> Employees
+            </a>
+            <a href="notifications.html" class="nav-item">
+                <span class="icon">🔔</span> Notifications
+            </a>
+            <a href="reports.html" class="nav-item">
+                <span class="icon">📈</span> Reports
+            </a>
+            <hr>
+            <a href="#" class="nav-item" onclick="logout(); return false;">
+                <span class="icon">🚪</span> Logout
+            </a>
+        </div>
+    </div>
+
+    <div class="main-content">
+        <div class="topbar">
+            <div class="topbar-left">
+                <button class="menu-toggle" onclick="toggleSidebar()">☰</button>
+                <h1>Dashboard</h1>
+            </div>
+            <div class="topbar-right">
+                <div class="user-info">
+                    <span id="userName">Agent</span>
+                </div>
+            </div>
+        </div>
+
+        <div class="content">
+            <div id="alertBox" class="alert"></div>
+
+            <div class="card">
+                <h2>Welcome! 👋</h2>
+                <p>Manage your estates, courts, blocks, and houses efficiently.</p>
+            </div>
+
+            <div class="card">
+                <h2>Quick Actions</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 15px;">
+                    <button class="btn btn-primary" onclick="location.href='estates.html'">➕ New Estate</button>
+                    <button class="btn btn-primary" onclick="location.href='courts.html'">➕ New Court</button>
+                    <button class="btn btn-primary" onclick="location.href='blocks.html'">➕ New Block</button>
+                    <button class="btn btn-primary" onclick="location.href='houses.html'">➕ New House</button>
+                    <button class="btn btn-primary" onclick="location.href='employees.html'">➕ Add Employee</button>
+                    <button class="btn btn-success" onclick="location.href='billing.html'">💳 Record Payment</button>
+                </div>
+            </div>
+
+            <div class="card">
+                <h2>Statistics</h2>
+                <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(200px, 1fr)); gap: 20px;">
+                    <div style="background: #f0f4ff; padding: 20px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 32px; font-weight: bold; color: #667eea;" id="estatCount">0</div>
+                        <div style="color: #666; margin-top: 10px;">Estates</div>
+                    </div>
+                    <div style="background: #d4edda; padding: 20px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 32px; font-weight: bold; color: #28a745;" id="houseCount">0</div>
+                        <div style="color: #666; margin-top: 10px;">Houses</div>
+                    </div>
+                    <div style="background: #fff3cd; padding: 20px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 32px; font-weight: bold; color: #856404;" id="occupiedCount">0</div>
+                        <div style="color: #666; margin-top: 10px;">Occupied</div>
+                    </div>
+                    <div style="background: #f8d7da; padding: 20px; border-radius: 8px; text-align: center;">
+                        <div style="font-size: 32px; font-weight: bold; color: #dc3545;" id="outstandingCount">KES 0</div>
+                        <div style="color: #666; margin-top: 10px;">Outstanding</div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="../js/app.js"></script>
+    <script src="../js/api.js"></script>
+    <script>
+        checkRole('AGENT');
+
+        async function loadDashboard() {
+            try {
+                const data = await API.getAgentDashboard();
+                document.getElementById('estatCount').textContent = data.estateCount || 0;
+                document.getElementById('houseCount').textContent = data.houseCount || 0;
+                document.getElementById('occupiedCount').textContent = data.occupiedCount || 0;
+                document.getElementById('outstandingCount').textContent = formatCurrency(data.outstandingAmount || 0);
+            } catch (error) {
+                showAlert('Error loading dashboard: ' + error.message, 'danger');
+            }
+        }
+
+        document.addEventListener('DOMContentLoaded', loadDashboard);
+    </script>
+</body>
+</html>
